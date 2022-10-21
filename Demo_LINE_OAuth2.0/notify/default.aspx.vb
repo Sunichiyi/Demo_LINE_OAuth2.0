@@ -14,6 +14,22 @@ Public Class _default1
             copyright.Text = "Copyright &copy; " & Today.Year.ToString & " Chang Gung University."
         End If
 
+        LoadHistory()
+    End Sub
+
+    Protected Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
+        If Not String.IsNullOrEmpty(TextBox1.Text.Trim) Then
+            Dim values As New Dictionary(Of String, String) From {
+                {"message", TextBox1.Text}
+            }
+            GetThenPostNotify(values)
+            LoadHistory()
+        Else
+            ScriptManager.RegisterStartupScript(Page, Page.GetType, "Popup", "alert('請輸入訊息內容', '','warning');", True)
+        End If
+    End Sub
+
+    Sub LoadHistory()
         Dim QrySql As String = "OAUTHDEMO_NOTIFYDEFAULT.SELECTHISTORY"
         Dim myCommand As New OracleCommand(QrySql, myConn) With {
             .CommandType = CommandType.StoredProcedure
@@ -41,17 +57,6 @@ Public Class _default1
         Finally
             myConn.Close()
         End Try
-    End Sub
-
-    Protected Sub Button1_Click(sender As Object, e As EventArgs) Handles Button1.Click
-        If Not String.IsNullOrEmpty(TextBox1.Text.Trim) Then
-            Dim values As New Dictionary(Of String, String) From {
-                {"message", TextBox1.Text}
-            }
-            GetThenPostNotify(values)
-        Else
-            ScriptManager.RegisterStartupScript(Page, Page.GetType, "Popup", "alert('請輸入訊息內容', '','warning');", True)
-        End If
     End Sub
 
     Sub GetThenPostNotify(values As Dictionary(Of String, String))
